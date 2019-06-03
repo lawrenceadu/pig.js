@@ -73,37 +73,37 @@
   function _injectStyle(containerId, classPrefix, transitionSpeed) {
 
     var css = (
-      '#' + containerId + ' {' +
-      '  position: relative;' +
-      '}' +
-      '.' + classPrefix + '-figure {' +
-      '  background-color: #D5D5D5;' +
-      '  overflow: hidden;' +
-      '  left: 0;' +
-      '  position: absolute;' +
-      '  top: 0;' +
-      '  margin: 0;' +
-      '}' +
-      '.' + classPrefix + '-figure img {' +
-      '  left: 0;' +
-      '  position: absolute;' +
-      '  top: 0;' +
-      '  height: 100%;' +
-      '  width: 100%;' +
-      '  opacity: 0;' +
-      '  transition: ' + (transitionSpeed / 1000) + 's ease opacity;' +
-      '  -webkit-transition: ' + (transitionSpeed / 1000) + 's ease opacity;' +
-      '}' +
-      '.' + classPrefix + '-figure img.' + classPrefix + '-thumbnail {' +
-      '  -webkit-filter: blur(30px);' +
-      '  filter: blur(30px);' +
-      '  left: auto;' +
-      '  position: relative;' +
-      '  width: auto;' +
-      '}' +
-      '.' + classPrefix + '-figure img.' + classPrefix + '-loaded {' +
-      '  opacity: 1;' +
-      '}'
+      `#${containerId} {
+        position: relative;
+      }
+      .${classPrefix}-figure {
+        background-color: #D5D5D5;
+        overflow: hidden;
+        left: 0;
+        position: absolute;
+        top: 0;
+        margin: 0;
+      }
+      .${classPrefix}-figure img {
+        left: 0;
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        opacity: 0;
+        transition: ${(transitionSpeed / 1000)}s ease opacity;
+        -webkit-transition: ${(transitionSpeed / 1000)}s ease opacity;
+      }
+      .${classPrefix}-figure img. ${classPrefix}-thumbnail {
+        -webkit-filter: blur(30px);
+        filter: blur(30px);
+        left: auto;
+        position: relative;
+        width: auto;
+      }
+      .${classPrefix}-figure img. ${classPrefix}-loaded {
+        opacity: 1;
+      }`
     );
 
     var head = document.head || document.getElementsByTagName("head")[0];
@@ -270,7 +270,7 @@
        * @returns {string} The URL of the image at the given size.
        */
       urlForSize: function(filename, size) {
-        return '/img/' + size + '/' + filename;
+        return `/img/${size}/${filename}`;
       },
 
       /**
@@ -365,7 +365,7 @@
    */
   Pig.prototype._getTransitionString = function() {
     if (this.isTransitioning) {
-      return (this.settings.transitionSpeed / 1000) + 's transform ease';
+      return `${(this.settings.transitionSpeed / 1000)}'s transform ease`;
     }
 
     return 'none';
@@ -579,7 +579,7 @@
   Pig.prototype._doLayout = function() {
 
     // Set the container height
-    this.container.style.height = this.totalHeight + 'px';
+    this.container.style.height = `${this.totalHeight}px`;
 
     // Get the top and bottom buffers heights.
     var bufferTop =
@@ -732,15 +732,16 @@
     // Instance information
     this.aspectRatio = singleImageData.aspectRatio;  // Aspect Ratio
     this.filename = singleImageData.filename;  // Filename
+    this.attributes = singleImageData.attributes; // Custom attributes
     this.index = index;  // The index in the list of images
 
     // The Pig instance
     this.pig = pig;
 
     this.classNames = {
-      figure: pig.settings.classPrefix + '-figure',
-      thumbnail: pig.settings.classPrefix + '-thumbnail',
-      loaded: pig.settings.classPrefix + '-loaded',
+      figure: `${pig.settings.classPrefix}-figure`,
+      thumbnail: `${pig.settings.classPrefix}-thumbnail`,
+      loaded: `${pig.settings.classPrefix}-loaded`,
     };
 
     return this;
@@ -777,6 +778,11 @@
         this.thumbnail = new Image();
         this.thumbnail.src = this.pig.settings.urlForSize(this.filename, this.pig.settings.thumbnailSize);
         this.thumbnail.className = this.classNames.thumbnail;
+
+        this.attributes.forEach(attr => {
+          this.thumbnail.setAttribute(attr.name, attr.data);
+        });
+
         this.thumbnail.onload = function() {
 
           // We have to make sure thumbnail still exists, we may have already been
