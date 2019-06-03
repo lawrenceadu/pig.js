@@ -94,14 +94,14 @@
         transition: ${(transitionSpeed / 1000)}s ease opacity;
         -webkit-transition: ${(transitionSpeed / 1000)}s ease opacity;
       }
-      .${classPrefix}-figure img. ${classPrefix}-thumbnail {
+      .${classPrefix}-figure img.${classPrefix}-thumbnail {
         -webkit-filter: blur(30px);
         filter: blur(30px);
         left: auto;
         position: relative;
         width: auto;
       }
-      .${classPrefix}-figure img. ${classPrefix}-loaded {
+      .${classPrefix}-figure img.${classPrefix}-loaded {
         opacity: 1;
       }`
     );
