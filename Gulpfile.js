@@ -1,14 +1,16 @@
 'use strict';
 
-var gulp = require('gulp');
-var jscs = require('gulp-jscs');
-var jshint = require('gulp-jshint');
-var plumber = require('gulp-plumber');
-var rename = require('gulp-rename');
-var uglify = require('gulp-uglify');
+const gulp    = require('gulp');
+const eslint  = require('gulp-eslint');
+const plumber = require('gulp-plumber');
+const rename  = require('gulp-rename');
+const uglify  = require('gulp-uglify');
+const babel   = require('gulp-babel');
 
 gulp.task('js:build', function() {
-  gulp.src(['./src/**/*.js', '!./src/**/*.min.js'])
+  return gulp
+    .src(['./src/**/*.js', '!./src/**/*.min.js'])
+    .pipe(babel({ presets: ["@babel/preset-env"].map(require.resolve) }))
     .pipe(plumber())
     .pipe(uglify())
     .pipe(rename({suffix: '.min'}))
@@ -16,15 +18,15 @@ gulp.task('js:build', function() {
 });
 
 gulp.task('js:lint', function() {
-  gulp.src(['./src/**/*.js', '!./src/**/*.min.js', 'Gulpfile.js'])
+  return gulp
+    .src(['./src/**/*.js', '!./src/**/*.min.js'])
     .pipe(plumber())
-    .pipe(jscs())
-    .pipe(jshint())
-    .pipe(jshint.reporter('default'));
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
 });
 
-gulp.task('build', ['js:lint', 'js:build']);
+gulp.task('build', gulp.parallel(['js:lint', 'js:build']));
 
-gulp.task('watch', ['build'], function() {
-  gulp.watch(['./src/**/*.js', 'Gulpfile.js'], ['build']);
+gulp.task('default', function() {
+  gulp.watch('./src/pig.js', gulp.parallel(['build']));
 });
